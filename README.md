@@ -39,7 +39,7 @@ If [available in Hex](https://hex.pm/docs/publish), the package can be installed
 
 ``` elixir
 def deps do
-  [{:doc_first_formatter, "~> 0.0.1", app: false}]
+  [{:doc_first_formatter, "~> 0.0.1"}]
 end
 ```
 
