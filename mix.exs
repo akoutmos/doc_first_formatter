@@ -5,8 +5,11 @@ defmodule DocFirstFormatter.Mixfile do
     [app: :doc_first_formatter,
      version: "0.0.1",
      elixir: "~> 1.2",
+     description: description,
+     package: package,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     test_paths: ["test"],
      deps: deps]
   end
 
@@ -28,5 +31,23 @@ defmodule DocFirstFormatter.Mixfile do
   # Type "mix help deps" for more examples and options
   defp deps do
     []
+  end
+
+  defp description do
+    """
+    An ExUnit formatter that puts a list of tests first, distinguishes pending
+    from failed tests, and saves detailed error information for once the test
+    suite is finished.
+    """
+  end
+
+  defp package do
+    [
+      files: ["lib", "mix.exs", "README.md", "LICENSE", "RELEASE_NOTES.md",
+              "CODE_OF_CONDUCT.md"],
+      maintainers: ["Bryce Kerley"],
+      licenses: ["Apache"],
+      links: %{"GitHub" => "https://github.com/bkerley/doc_first_formatter"}
+    ]
   end
 end
