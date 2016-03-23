@@ -72,7 +72,7 @@ defmodule DocFirstFormatter do
   end
 
   def handle_event({:test_finished, %ExUnit.Test{state: {:failed, _failed}} = test}, config) do
-    IO.puts failure(trace_test_result(test), config)
+    IO.puts failure(trace_test_failure(test), config)
 
     {:ok, %{config | tests_counter: config.tests_counter + 1,
             failures_counter: config.failures_counter + 1,
@@ -111,6 +111,10 @@ defmodule DocFirstFormatter do
 
   defp trace_test_pending(test) do
     "\r  * #{trace_test_name test} (PENDING)"
+  end
+
+  defp trace_test_failure(test) do
+    "\r  * #{trace_test_name test} (#{trace_test_time(test)}, FAILED)"
   end
 
   defp trace_test_result(test) do
@@ -152,9 +156,10 @@ defmodule DocFirstFormatter do
     # singular/plural
     test_pl = pluralize(config.tests_counter, "test", "tests")
     failure_pl = pluralize(config.failures_counter, "failure", "failures")
+    pending_pl = pluralize(config.pendings_counter, "pending", "pendings")
 
     message =
-      "#{config.tests_counter} #{test_pl}, #{config.failures_counter} #{failure_pl}"
+      "#{config.tests_counter} #{test_pl}, #{config.failures_counter} #{failure_pl}, #{config.pendings_counter} #{pending_pl}"
       |> if_true(config.skipped_counter > 0, & &1 <> ", #{config.skipped_counter} skipped")
       |> if_true(config.invalids_counter > 0, & &1 <> ", #{config.invalids_counter} invalid")
 
