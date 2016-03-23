@@ -56,6 +56,8 @@ ExUnit.start
 Everyone interacting with this project is expected to follow the
 [code of conduct][5].
 
+[5]: https://github.com/bkerley/doc_first_formatter/blob/master/CODE_OF_CONDUCT.md
+
 ## Contributing
 
 Want to make this project better? I'd love to have your help! Both bug reports
