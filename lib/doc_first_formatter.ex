@@ -20,7 +20,8 @@ defmodule DocFirstFormatter do
       skipped_counter: 0,
       invalids_counter: 0,
       pendings_counter: 0,
-      failures: []
+      failures: [],
+      pendings: []
     }
     {:ok, config}
   end
@@ -30,6 +31,7 @@ defmodule DocFirstFormatter do
   end
 
   def handle_event({:suite_finished, run_us, load_us}, config) do
+    print_pendings(config)
     print_failures(config)
 
     print_suite(config, run_us, load_us)
@@ -68,7 +70,8 @@ defmodule DocFirstFormatter do
     IO.puts invalid(trace_test_pending(test), config)
 
     {:ok, %{config | tests_counter: config.tests_counter + 1,
-            pendings_counter: config.pendings_counter + 1}}
+            pendings_counter: config.pendings_counter + 1,
+            pendings: [test | config.pendings]}}
   end
 
   def handle_event({:test_finished, %ExUnit.Test{state: {:failed, _failed}} = test}, config) do
@@ -76,7 +79,7 @@ defmodule DocFirstFormatter do
 
     {:ok, %{config | tests_counter: config.tests_counter + 1,
             failures_counter: config.failures_counter + 1,
-           failures: [test| config.failures]}}
+            failures: [test| config.failures]}}
   end
 
   def handle_event({:case_started, %ExUnit.TestCase{name: name}}, config) do
@@ -149,6 +152,18 @@ defmodule DocFirstFormatter do
     end)
   end
 
+  defp print_pendings(config) do
+    IO.puts ""
+    config.pendings
+    |> Enum.reverse
+    |> Enum.with_index(1)
+    |> Enum.each(fn({%ExUnit.Test{state: {:failed, failed}} = test, counter}) ->
+      formatted = format_test_pending(test, failed, counter,
+                                      config)
+      print_pending(formatted, config)
+    end)
+  end
+
   defp print_suite(config, run_us, load_us) do
     IO.write "\n"
     IO.puts format_time(run_us, load_us)
@@ -192,6 +207,21 @@ defmodule DocFirstFormatter do
       true -> IO.puts "\n"
     end
     IO.puts formatted
+  end
+
+  defp print_pending(formatted, config) do
+    formatted
+    |> invalid(config)
+    |> IO.puts
+  end
+
+  defp format_test_pending(test, failures, counter, config) do
+    %ExUnit.Test{name: name, case: test_case} = test
+
+    "~3.B) ~s (~s) (PENDING)"
+    |> :io_lib.format([counter, name, inspect(test_case)])
+    |> IO.chardata_to_string
+    |> invalid(config)
   end
 
   # Color styles
