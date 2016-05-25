@@ -150,7 +150,7 @@ defmodule DocFirstFormatter do
   end
 
   defp print_suite(config, run_us, load_us) do
-    IO.write "\n\n"
+    IO.write "\n"
     IO.puts format_time(run_us, load_us)
 
     # singular/plural
