@@ -15,6 +15,8 @@ CoolTest
   * failing (0.01ms, FAILED) # this line is red
   * passing 3 (0.2ms)
 
+  1) pending (CoolTest) (PENDING)
+
 
   1) test failing (CoolTest)
      test/cool_test.exs:13
